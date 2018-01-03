@@ -11,7 +11,8 @@ import { catchError, map, tap } from 'rxjs/operators';
 @Injectable()
 export class HeroService {
 
-  private heroesUrl = 'api/heroes'; // URL to web api
+  // private heroesUrl = 'api/heroes'; // URL to web api
+  private heroesUrl = 'http://localhost:8080/api/heroes';
   
   private httpOptions = {
     headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -21,17 +22,16 @@ export class HeroService {
     private http: HttpClient,
     private messageService: MessageService) { }
   
+  // GET: get list of heroes from server
   getHeroes(): Observable<Hero[]> {
-    // this.messageService.add('HeroService: fetched heroes');
     return this.http.get<Hero[]>(this.heroesUrl).pipe(
       tap(heroes => this.log(`fetched heroes`)),
       catchError(this.handleError('getHeroes', []))
     );
   }
   
+  // GET: get a hero from the server
   getHero(id: number): Observable<Hero> {
-    // this.messageService.add(`HeroService: fetched hero id=${id}`);
-    // return of(HEROES.find(hero => hero.id === id));
     const url = `${this.heroesUrl}/${id}`;
     return this.http.get<Hero>(url).pipe(
       tap(_ => this.log(`fetched hero id=${id}`)),
@@ -77,6 +77,7 @@ export class HeroService {
     );
   }
   
+  // handleError: custom error handler for http operations
   private handleError<T> (operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       // TODO: send the error to remote logging infrastructure
